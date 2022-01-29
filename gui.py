@@ -3,7 +3,10 @@ import mido
 import virtual_midi_device as vmd
 from constants import *
 import server
+import pystray
+from PIL import Image
 
+icon = None
 # 窗口对象
 window = None
 # 服务器启动状态的StringVar
@@ -43,8 +46,10 @@ def _get_first_item_starts_with_or_empty(list, starts_with):
     return r
 
 
-# 窗口被关闭时调用
-def _on_close_window():
+# 这个方法是真正关闭窗口
+def _close_window():
+    # 关闭系统托盘图标
+    if icon != None: icon.stop()
     # 关闭设备
     _close_virtual_device()
     # 关闭服务器
@@ -52,6 +57,21 @@ def _on_close_window():
         server.stop(_stop_server_callback)
     # 销毁窗口
     window.destroy()
+
+# 从系统托盘展示
+def _show_window():
+    if icon != None: icon.stop()
+    window.after(0, window.deiconify)
+
+# 当窗口关闭被点击时，拦截，不关闭窗口，最小化到系统托盘
+def _hide_to_system_tray():
+    global icon
+    window.withdraw()
+    image = Image.open("icon.ico")
+    menu = (pystray.MenuItem('Quit', _close_window), pystray.MenuItem('Show', _show_window))
+    icon = pystray.Icon("VPadServer", image, "VPadServer", menu)
+    icon.run()
+
 
 # 启动或关闭服务器
 def _toggle_vpad_server():
@@ -111,9 +131,11 @@ def init_ui():
     to_start_or_stop.set("START")
     Button(window, textvariable=to_start_or_stop, command = _toggle_vpad_server).place(x = 10, y = 240)
 
-    window.protocol("WM_DELETE_WINDOW", _on_close_window)
+    Button(window, text="QUIT", command = _close_window).place(x = 80, y = 240)
+
+    # 当点击右上角的x时，不退出，隐藏到系统托盘，
+    window.protocol("WM_DELETE_WINDOW", _hide_to_system_tray)
     window.mainloop()
 
 
-print(__name__)
 init_ui()

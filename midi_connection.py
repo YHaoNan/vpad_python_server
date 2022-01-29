@@ -1,6 +1,6 @@
-import threading
 
 import mido
+import mido.backends.rtmidi
 import time
 
 STATE_ON = 1

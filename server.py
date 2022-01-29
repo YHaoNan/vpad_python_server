@@ -14,9 +14,9 @@ class VPadRequestHandler(socketserver.BaseRequestHandler):
     def handle(self) -> None:
         while True:
             self.data = self.request.recv(_BUFFER_SIZE)
-            print(self.data)
             # 如果没有数据了 跳出循环
             if(len(self.data) == 0): break
+            print(self.data)
             # 开始读取数据 暂时没有考虑数据超出缓冲区的情况
             self.offset = 0
             while self.offset < len(self.data):
@@ -73,9 +73,9 @@ def serve(inst_midi_port, controller_midi_port, sleep_impl, callback):
 
     if _server == None:
         _server = socketserver.ThreadingTCPServer(('0.0.0.0', constants.VPAD_SERVER_PORT), VPadRequestHandler)
+        _server.daemon_threads = True
         _server_thread = threading.Thread(target=_server.serve_forever)
         _server_thread.setName("server thread")
-        _server_thread.setDaemon(True)
         _server_thread.start()
         callback(True)
     else:
