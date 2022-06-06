@@ -17,6 +17,7 @@ class ArpMethod:
         self.root_note = root_note
         # self.up_note_cnt代表琶音器能够往上上升几次
         self.up_note_cnt = up_note_cnt
+        
 
     def next_note(self):
         # 默认琶音器直接返回root_note，也就是不琶音

@@ -14,6 +14,7 @@ class VPadRequestHandler(socketserver.BaseRequestHandler):
     def handle(self) -> None:
         while True:
             self.data = self.request.recv(_BUFFER_SIZE)
+            print(self.data)
             # 如果没有数据了 跳出循环
             if(len(self.data) == 0): break
             print(self.data)

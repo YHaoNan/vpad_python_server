@@ -9,7 +9,7 @@ def read_int4(bytes, offset):
 
 def read_string(bytes, offset):
     string_len = bytes[offset]
-    return slice(bytes, offset+1, string_len).decode('iso8859-1'), 1 + string_len
+    return slice(bytes, offset+1, string_len).decode('UTF-8'), 1 + string_len
 
 # 从offset 开始 读取 len 个
 def slice(bytes, offset, len):
@@ -25,7 +25,7 @@ def int4(num):
     return [(num >> 24 & 0xff), (num >> 16 & 0xff), (num >> 8 & 0xff), (num & 0xff)]
 
 def string(str):
-    return int1(len(str)) + list(str.encode('iso8859-1'))
+    return int1(len(str)) + list(str.encode('UTF-8'))
 
 def message(bytes_list):
     # 组合消息体

@@ -1,10 +1,10 @@
 from tkinter import *
 import mido
-import virtual_midi_device as vmd
 from constants import *
 import server
 import pystray
 from PIL import Image
+import mido.backends.rtmidi
 
 icon = None
 # 窗口对象
@@ -25,16 +25,16 @@ to_start_or_stop = None
 _tevm_inst_port = None
 _tevm_ctrl_port = None
 
-# 调用teVirtualMIDI DLL， 创建虚拟MIDI设备
-def _create_virtual_device():
-    global _tevm_inst_port, _tevm_ctrl_port
-    _tevm_inst_port = vmd.create_virtual_midi_device(INSTRUMENT_DEVICE_NAME)
-    _tevm_ctrl_port = vmd.create_virtual_midi_device(CONTROLLER_DEVICE_NAME)
-
-# 关闭虚拟MIDI设备，在应用程序结束时会被自动调用
-def _close_virtual_device():
-    if _tevm_inst_port != None: vmd.close_virtual_midi_device(_tevm_inst_port)
-    if _tevm_ctrl_port != None: vmd.close_virtual_midi_device(_tevm_ctrl_port)
+# # 调用teVirtualMIDI DLL， 创建虚拟MIDI设备
+# def _create_virtual_device():
+#     global _tevm_inst_port, _tevm_ctrl_port
+#     _tevm_inst_port = vmd.create_virtual_midi_device(INSTRUMENT_DEVICE_NAME)
+#     _tevm_ctrl_port = vmd.create_virtual_midi_device(CONTROLLER_DEVICE_NAME)
+#
+# # 关闭虚拟MIDI设备，在应用程序结束时会被自动调用
+# def _close_virtual_device():
+#     if _tevm_inst_port != None: vmd.close_virtual_midi_device(_tevm_inst_port)
+#     if _tevm_ctrl_port != None: vmd.close_virtual_midi_device(_tevm_ctrl_port)
 
 # 辅助方法，获取字符串数组中第一个以某一子字符串开头的列表项，如没有则返回空字符串
 def _get_first_item_starts_with_or_empty(list, starts_with):
@@ -51,7 +51,7 @@ def _close_window():
     # 关闭系统托盘图标
     if icon != None: icon.stop()
     # 关闭设备
-    _close_virtual_device()
+    # _close_virtual_device()
     # 关闭服务器
     if state.get() == "ON":
         server.stop(_stop_server_callback)
@@ -97,7 +97,7 @@ def init_ui():
 
     global window, state, inst, ctrl, sleep_impl, to_start_or_stop
 
-    _create_virtual_device()
+    # _create_virtual_device()
 
     window = Tk()
     window.geometry("260x300")
